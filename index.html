@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial Completo de Vue.js 3 y API REST</title>
+    <style>
+        :root {
+            --primary-color: #42b983;
+            --secondary-color: #35495e;
+            --bg-light: #f8f9fa;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --code-bg: #282c34;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            display: flex;
+            background-color: #ffffff;
+        }
+
+        /* Navegación Lateral */
+        nav {
+            width: 280px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background-color: var(--secondary-color);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        nav h1 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        nav ul li a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            padding-left: 1.5rem;
+        }
+
+        /* Contenedor Principal */
+        main {
+            margin-left: 280px;
+            padding: 3rem 4rem;
+            width: calc(100% - 280px);
+            max-width: 1200px;
+        }
+
+        /* Estilos de Secciones */
+        section {
+            margin-bottom: 5rem;
+            padding-top: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 3rem;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 1rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        /* Bloques de Código */
+        pre {
+            background-color: var(--code-bg);
+            color: #abb2bf;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.3);
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-light);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d14;
+            font-size: 0.95rem;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        /* Notas e Info-boxes */
+        .info-box {
+            background-color: #e6f7ff;
+            border-left: 4px solid #1890ff;
+            padding: 1rem 1.5rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.5rem 0;
+        }
+
+        .info-box p {
+            margin-bottom: 0;
+            font-style: italic;
+        }
+
+        /* Encabezado de Portada */
+        .header-banner {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, #2c3e50 100%);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .header-banner h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .header-banner p {
+            text-align: center;
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>Vue.js Docs</h1>
+        <ul>
+            <li><a href="#introduccion">1. Introducción</a></li>
+            <li><a href="#justificacion">2. Justificación</a></li>
+            <li><a href="#instalacion">3. Instalación Local</a></li>
+            <li><a href="#entorno-web">4. Entorno en la Nube</a></li>
+            <li><a href="#primeros-pasos">5. Primeros Pasos</a></li>
+            <li><a href="#utilizacion">6. Utilización Base</a></li>
+            <li><a href="#funcionamiento">7. Funcionamiento Interno</a></li>
+            <li><a href="#proyecto-rest">8. Proyecto API REST</a></li>
+            <li><a href="#explicacion-codigo">9. Análisis del Código</a></li>
+            <li><a href="#conclusiones">10. Conclusiones</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="header-banner">
+            <h1>Guía Tecnológica de Vue.js 3</h1>
+            <p>Construcción de Interfaces Dinámicas y Consumo de APIs REST</p>
+        </div>
+
+        <section id="introduccion">
+            <h2>1. Introducción al Tutorial</h2>
+            <p>El desarrollo web moderno exige la creación de interfaces de usuario altamente interactivas, eficientes y modulares. Los enfoques tradicionales basados en la manipulación directa del Modelo de Objetos del Documento (DOM) con JavaScript nativo suelen volverse difíciles de mantener a medida que las aplicaciones escalan. Para resolver este problema, surgieron los frameworks de JavaScript de nivel empresarial.</p>
+            <p>Este tutorial técnico tiene como objetivo guiar al desarrollador en el aprendizaje, adopción y despliegue del framework progresivo <strong>Vue.js 3</strong>. A través de un enfoque balanceado entre la teoría conceptual y la implementación práctica, analizaremos cómo construir componentes reutilizables, gestionar el estado dinámico y conectar nuestra aplicación a servicios externos mediante arquitecturas de API REST utilizando la biblioteca Axios.</p>
+        </section>
+
+        <section id="justificacion">
+            <h2>2. Justificación del Framework</h2>
+            <p>Vue.js es un framework progresivo de JavaScript diseñado para construir interfaces de usuario de manera eficiente. A diferencia de los frameworks monolíticos, Vue está diseñado desde cero para ser adoptado de forma incremental, adaptándose tanto a pequeños componentes integrados en páginas web como a robustas aplicaciones de una sola página (SPA).</p>
+            
+            <h3>¿Para qué sirve y cuáles son sus aplicaciones?</h3>
+            <p>Vue.js sirve principalmente para estructurar y simplificar la creación de aplicaciones web del lado del cliente (Frontend). Su núcleo se centra exclusivamente en la capa de la vista, lo que facilita su integración con otras librerías o proyectos existentes. Sus aplicaciones principales incluyen:</p>
+            <ul>
+                <li><strong>Single Page Applications (SPAs):</strong> Aplicaciones fluidas que no necesitan recargar la página completa al navegar.</li>
+                <li><strong>Paneles de administración y Dashboards:</strong> Interfaces que requieren reactividad inmediata ante cambios en flujos de datos complejos.</li>
+                <li><strong>Componentes interactivos aislados:</strong> Elementos específicos dentro de plataformas tradicionales (como carros de compra o buscadores dinámicos).</li>
+            </ul>
+
+            <h3>Lenguajes de apoyo y Prerrequisitos</h3>
+            <p>Vue.js se apoya de forma nativa sobre los tres pilares del desarrollo frontend estándar:</p>
+            <ul>
+                <li><strong>JavaScript (ES6+) o TypeScript:</strong> Para la gestión de la lógica y estados.</li>
+                <li><strong>HTML5:</strong> Para la definición de las estructuras semánticas mediante plantillas decodificables.</li>
+                <li><strong>CSS3:</strong> Para el diseño visual de componentes, soportando preprocesadores como SASS o LESS.</li>
+            </ul>
+            <p>Los prerrequisitos mínimos del sistema e infraestructura para el desarrollo local incluyen contar con una versión estable del entorno de ejecución Node.js y su respectivo gestor de paquetes npm para la correcta resolución de dependencias.</p>
+        </section>
+
+        <section id="instalacion">
+            <h2>3. Instalación y Configuración del Entorno Local</h2>
+            <p>Para la implementación de proyectos formales en computadoras locales, el framework requiere un proceso de aprovisionamiento de dependencias. A continuación, se detallan los requerimientos estándar del ecosistema industrial.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Elemento</th>
+                        <th>Versión Necesaria</th>
+                        <th>Propósito del Elemento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Node.js</td>
+                        <td>v18.0.0 (LTS) o superior</td>
+                        <td>Entorno de ejecución para ejecutar las herramientas de construcción en la máquina local.</td>
+                    </tr>
+                    <tr>
+                        <td>npm (Node Package Manager)</td>
+                        <td>v9.0.0 o superior</td>
+                        <td>Gestor encargado de descargar e instalar librerías externas como Vue y Axios.</td>
+                    </tr>
+                    <tr>
+                        <td>Vite / Vue CLI</td>
+                        <td>Última versión disponible</td>
+                        <td>Herramienta empaquetadora optimizada para levantar servidores de desarrollo ultra rápidos.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Pasos para la instalación local</h3>
+            <p>1. Descargar e instalar la versión estable de Node.js desde su sitio web oficial.</p>
+            <p>2. Abrir la terminal del sistema operativo y ejecutar el comando global para inicializar la estructura base de un nuevo proyecto a través del andamiaje oficializado por Vite:</p>
+            <pre><code>npm create vue@latest</code></pre>
+            <p>3. El instalador solicitará el nombre del proyecto y configuraciones adicionales (como soporte para TypeScript, Vue Router o Pinia). Una vez seleccionado el entorno, ejecute los siguientes comandos de inicialización dentro del directorio asignado:</p>
+            <pre><code>cd nombre-de-tu-proyecto
+npm install
+npm run dev</code></pre>
+
+            <h3>Variables de Entorno y Bases de Datos</h3>
+            <p>Vue.js es un framework estrictamente enfocado en la interfaz de usuario (Frontend), por lo cual <strong>no necesita ni incluye un motor de base de datos nativo</strong>. El almacenamiento de la información se delega a bases de datos relacionales o NoSQL remotas, consumidas mediante peticiones de red asíncronas.</p>
+            <p>Para el manejo de claves públicas y rutas dinámicas de APIs, se configuran archivos de variables de entorno con extensión <code>.env</code> situados en la raíz del proyecto, debiendo tener el prefijo obligatorio <code>VITE_</code> para ser expuestas dentro del código cliente.</p>
+        </section>
+
+        <section id="entorno-web">
+            <h2>4. Alternativa: Entornos de Desarrollo en la Nube (Sin Instalación)</h2>
+            <p>En entornos educativos, experimentales o de prototipado rápido, es posible prescindir completamente de configuraciones y descargas locales en el sistema operativo. Plataformas modernas de desarrollo en la nube (Cloud IDEs) como <strong>StackBlitz</strong> o <strong>CodeSandbox</strong> permiten emular un entorno de desarrollo completo directamente en el navegador de internet.</p>
+            <p>Estas herramientas integran un servidor virtualizado que ejecuta Node.js en segundo plano a través de tecnologías web avanzadas, ofreciendo un panel triple que incluye la jerarquía de archivos del proyecto, un editor de código inteligente con autocompletado y una ventana de previsualización en tiempo real que refleja de forma instantánea cualquier cambio guardado.</p>
+            <div class="info-box">
+                <p><strong>Ventaja Clave:</strong> Al vincular estas plataformas con repositorios globales de plataformas como GitHub, el código fuente queda almacenado de forma permanente y disponible en la nube con un solo clic, cumpliendo de forma nativa los requerimientos de despliegue.</p>
+            </div>
+        </section>
+
+        <section id="primeros-pasos">
+            <h2>5. Primeros Pasos: El Código "Hola Mundo"</h2>
+            <p>La aproximación inicial clásica para validar el funcionamiento del ciclo reactivo en Vue 3 consiste en modificar el componente raíz para desplegar una cadena de texto dinámica controlada por el estado interno del framework.</p>
+            <p>A diferencia de la manipulación tradicional en JavaScript nativo (donde se requiere buscar el elemento con comandos pesados como <code>document.getElementById</code> y alterar explícitamente su propiedad de texto), Vue vincula la estructura HTML con los datos mediante una plantilla reactiva declarativa.</p>
+            <p>Para crear un "Hola Mundo" limpio, reemplazamos el contenido básico del archivo inicial por una estructura limpia que renderice un mensaje desde la lógica interna hacia la pantalla mediante llaves dobles (interpolación de texto), asegurando que el motor de renderizado asocie los datos del componente con el DOM visual del navegador.</p>
+        </section>
+
+        <section id="utilizacion">
+            <h2>6. Utilización del Framework: Creación de la Aplicación Base</h2>
+            <p>Al instanciar una aplicación estructurada en Vue 3, el framework establece un andamiaje base de directorios jerárquicos esenciales para el correcto funcionamiento del compilador.</p>
+            <ul>
+                <li><strong><code>index.html</code>:</strong> El punto de entrada único de la web que contiene el contenedor genérico <code>&lt;div id="app"&gt;&lt;/div&gt;</code> sobre el cual Vue se monta de forma dinámica.</li>
+                <li><strong><code>src/main.js</code>:</strong> El archivo de inicialización del ecosistema que importa la librería principal de Vue, lee el componente raíz y lo enlaza al identificador físico del documento HTML.</li>
+                <li><strong><code>src/App.vue</code>:</strong> El componente principal que actúa como contenedor globalizado de las vistas y subcomponentes del aplicativo.</li>
+            </ul>
+            <p>Para visualizar los resultados en tiempo real durante la fase de desarrollo, el empaquetador despliega un servidor web local (usualmente mapeado bajo la dirección de red en bucle cerrado <code>http://localhost:5173</code>). En entornos integrados en la nube como StackBlitz, este resultado se proyecta automáticamente en el mininavegador integrado a la derecha de la pantalla.</p>
+        </section>
+
+        <section id="funcionamiento">
+            <h2>7. Explicación del Funcionamiento Interno</h2>
+            <p>El núcleo operativo de Vue 3 se fundamenta en el concepto de <strong>Componentes de Archivo Único</strong> (Single File Components - SFC). Estos son ficheros especiales guardados bajo la extensión de archivo integrada <code>.vue</code> que encapsulan toda la arquitectura del componente en un solo lugar.</p>
+            
+            <p>Cada componente se divide estrictamente en tres bloques estructurales bien definidos:</p>
+            <ol>
+                <li><strong>Plantilla (<code>&lt;template&gt;</code>):</strong> Define la estructura puramente visual en HTML extendido, enriquecida con directivas reactivas propias del framework.</li>
+                <li><strong>Lógica (<code>&lt;script&gt;</code>):</strong> Administra el comportamiento de los datos, métodos de petición de red y hooks del ciclo de vida del componente mediante JavaScript o TypeScript.</li>
+                <li><strong>Estilo (<code>&lt;style&gt;</code>):</strong> Contiene las reglas CSS para el diseño visual, con la opción de añadir el atributo <code>scoped</code> para garantizar de forma segura que los estilos afecten exclusivamente al componente actual, evitando colisiones globales.</li>
+            </ol>
+        </section>
+
+        <section id="proyecto-rest">
+            <h2>8. Proyecto Práctico: Aplicación del Clima con API REST (Axios)</h2>
+            <p>Para demostrar el potencial empresarial del framework en arquitecturas de red distribuida, presentaremos el desarrollo paso a paso de una aplicación de consulta meteorológica en tiempo real. La aplicación se conecta de forma asíncrona a la API externa global de Open-Meteo mediante el cliente HTTP Axios.</p>
+            <p>El flujo operativo consta de dos fases críticas: la conversión de texto plano a coordenadas geoespaciales (Latitud y Longitud) y la posterior solicitud de los índices climáticos vigentes de la región buscada.</p>
+            
+            <p>A continuación se presenta el código completo integrado que debe colocarse directamente en el archivo primario <code>src/App.vue</code>:</p>
+
+<pre><code>&lt;template&gt;
+  &lt;div id="app"&gt;
+    &lt;h2&gt;🌤️ Aplicación del Clima Industrial&lt;/h2&gt;
+    &lt;div class="search-box"&gt;
+      &lt;input v-model="ciudad" placeholder="Ingresa una ciudad (ej. Madrid, Tokio)" /&gt;
+      &lt;button @click="buscarClima"&gt;Obtener Clima&lt;/button&gt;
+    &lt;/div&gt;
+
+    &lt;div v-if="clima" class="resultado"&gt;
+      &lt;h3&gt;Clima en {{ ciudad }}&lt;/h3&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
+          &lt;tr&gt;
+            &lt;th&gt;Parámetro Meteorológico&lt;/th&gt;
+            &lt;th&gt;Valor Reportado&lt;/th&gt;
+          &lt;/tr&gt;
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          &lt;tr&gt;
+            &lt;td&gt;🌡️ Temperatura Actual&lt;/td&gt;
+            &lt;td&gt;&lt;strong&gt;{{ clima.temperature }} °C&lt;/strong&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;💨 Velocidad del Viento&lt;/td&gt;
+            &lt;td&gt;{{ clima.windspeed }} km/h&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import axios from 'axios';
+
+export default {
+  name: 'App',
+  data() {
+    return {
+      ciudad: '',
+      clima: null
+    };
+  },
+  methods: {
+    async buscarClima() {
+      if (!this.ciudad.trim()) {
+        alert('Por favor, ingresa una ciudad válida.');
+        return;
+      }
+      try {
+        // Fase 1: Solicitud de Coordenadas de la Ciudad via Geocoding API
+        const geoRes = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${this.ciudad}&count=1`);
+        
+        if (!geoRes.data.results || geoRes.data.results.length === 0) {
+          alert('No se encontraron coordenadas para la ciudad especificada.');
+          return;
+        }
+
+        const lat = geoRes.data.results[0].latitude;
+        const lon = geoRes.data.results[0].longitude;
+
+        // Fase 2: Consulta Meteorológica en Tiempo Real
+        const climaRes = await axios.get(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+        
+        // Asignación reactiva de datos al estado del componente
+        this.clima = climaRes.data.current_weather;
+      } catch (error) {
+        alert('Error en la comunicación con la API. Verifica tu conexión de red.');
+      }
+    }
+  }
+};
+</script>
+
+&lt;style scoped&gt;
+#app {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.search-box {
+  display: flex;
+  margin-bottom: 25px;
+  gap: 10px;
+}
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+}
+button {
+  padding: 12px 20px;
+  cursor: pointer;
+  background-color: #42b983;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+button:hover {
+  background-color: #3aa876;
+}
+.resultado {
+  margin-top: 15px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+&lt;/style&gt;</code></pre>
+        </section>
+
+        <section id="explicacion-codigo">
+            <h2>9. Análisis Detallado del Código por Fragmentos</h2>
+            <p>Para dominar el funcionamiento de Vue.js en entornos reales, es fundamental comprender detalladamente el rol operativo que juega cada elemento del bloque del proyecto práctico.</p>
+            
+            <h3>La Directiva Reactiva <code>v-model</code></h3>
+            <p>En el cuadro de búsqueda HTML, la instrucción <code>v-model="ciudad"</code> implementa lo que en desarrollo se conoce como <em>Double Data Binding</em> o vinculación bidireccional de datos. Esto significa que la variable <code>ciudad</code> del bloque script siempre estará sincronizada en tiempo real con el texto visible en pantalla, eliminando la necesidad de leer manualmente el valor del input al presionar el botón.</p>
+
+            <h3>Control del Flujo del DOM con <code>v-if</code></h3>
+            <p>La etiqueta contenedora del bloque de resultados cuenta con la instrucción condicional <code>v-if="clima"</code>. Su función en el ciclo de renderizado es mantener ocultos la tabla de resultados y el contenedor del clima hasta que la variable <code>clima</code> deje de ser nula, evitando errores de renderizado en el navegador al intentar leer propiedades inexistentes antes de realizar la consulta de red.</p>
+
+            <h3>Peticiones Asíncronas con Axios y <code>async/await</code></h3>
+            <p>Debido a que las peticiones HTTP a servidores externos no ofrecen una respuesta instantánea y dependen del ancho de banda, la lógica interna ejecuta la función mediante el esquema no bloqueante <code>async/await</code>. La instrucción <code>await axios.get()</code> detiene de forma controlada la ejecución de esa función específica hasta que el servidor de la API retorna el JSON con los datos meteorológicos, asegurando estabilidad en la interfaz gráfica del usuario.</p>
+        </section>
+
+        <section id="conclusiones">
+            <h2>10. Conclusiones del Tutorial</h2>
+            <p>Al concluir este manual técnico, se han alcanzado los objetivos pedagógicos y prácticos propuestos para el dominio básico e intermedio del desarrollo frontend moderno en Vue.js 3. A través de la estructura analizada, el desarrollador cuenta ahora con las bases para entender arquitecturas reactivas modulares independientes de la manipulación tradicional y costosa del DOM nativo.</p>
+            <p>La implementación práctica de una aplicación funcional del clima demuestra que la integración de librerías externas mediante Axios optimiza la comunicación de red en arquitecturas cliente-servidor distribuidas de gran escala. Dominar estos conceptos básicos sienta los fundamentos necesarios para el desarrollo posterior de sistemas robustos multiplataforma empresariales.</p>
+        </section>
+    </main>
+
+</body>
+</html>
